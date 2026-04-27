@@ -20,9 +20,9 @@ c.execute('''
 ''')
 conn.commit()
 
-# --- 100 QUESTIONS CONCRÈTES ET EXPLICITES (aucun placeholder) ---
+# --- 100 QUESTIONS UNIQUES ET CONCRÈTES ---
 QUESTIONS = [
-    # SOFT (1-15)
+    # SOFT 1-15
     {"id": 1, "text": "Longs baisers profonds avec la langue pendant de longues minutes", "tag": "sensuel", "level": "Soft", "type": "smash"},
     {"id": 2, "text": "Massage lent et sensuel de tout le corps avec de l'huile chaude", "tag": "sensuel", "level": "Soft", "type": "smash"},
     {"id": 3, "text": "Se caresser mutuellement très longtemps sans pénétration", "tag": "sensuel", "level": "Soft", "type": "smash"},
@@ -41,9 +41,9 @@ QUESTIONS = [
 
     # Choix multiple 1
     {"id": 16, "text": "Quelle est ta position préférée pour commencer doucement ?", "tag": "penetration", "level": "Soft", "type": "choice",
-     "options": ["Missionnaire", "Cuillères", "Cowgirl douce", "Debout", "Autre"]},
+     "options": ["Missionnaire", "Cuillères", "Cowgirl douce", "Debout contre un mur", "Autre"]},
 
-    # MEDIUM (17-35)
+    # MEDIUM
     {"id": 17, "text": "Doggy style bien cambré", "tag": "penetration", "level": "Medium", "type": "smash"},
     {"id": 18, "text": "Cowgirl / Reverse cowgirl en contrôlant le rythme", "tag": "penetration", "level": "Medium", "type": "smash"},
     {"id": 19, "text": "Parler salement pendant l'acte (dirty talk)", "tag": "parole", "level": "Medium", "type": "smash"},
@@ -54,92 +54,117 @@ QUESTIONS = [
     {"id": 24, "text": "Edging (s'arrêter juste avant l'orgasme)", "tag": "hard", "level": "Medium", "type": "smash"},
     {"id": 25, "text": "Sexe debout contre un mur", "tag": "penetration", "level": "Medium", "type": "smash"},
     {"id": 26, "text": "Regarder l'autre se masturber jusqu'à l'orgasme", "tag": "voyeur", "level": "Medium", "type": "smash"},
-    {"id": 27, "text": "Sexe dans un lieu semi-public avec un peu de risque", "tag": "exhib", "level": "Medium", "type": "smash"},
-    {"id": 28, "text": "Jeu de rôle léger (prof/élève ou patron/secrétaire)", "tag": "roleplay", "level": "Medium", "type": "smash"},
 
     # Choix multiple 2
-    {"id": 29, "text": "Quelle position préfères-tu pour un rythme moyen ?", "tag": "penetration", "level": "Medium", "type": "choice",
-     "options": ["Doggy style", "Cowgirl", "Missionnaire", "Levrette", "Autre"]},
+    {"id": 27, "text": "Quelle position préfères-tu pour un rythme moyen ?", "tag": "penetration", "level": "Medium", "type": "choice",
+     "options": ["Doggy style", "Cowgirl", "Missionnaire profond", "Levrette", "Autre"]},
 
     # Consentement
-    {"id": 30, "text": "Vérifier régulièrement pendant l'acte si tout va bien (check-in)", "tag": "consentement", "level": "Soft", "type": "smash"},
-    {"id": 31, "text": "Utiliser un safeword clair (ex: ROUGE = arrêt immédiat)", "tag": "consentement", "level": "Medium", "type": "smash"},
-    {"id": 32, "text": "Pouvoir dire 'stop' ou 'ralentis' à n'importe quel moment", "tag": "consentement", "level": "Soft", "type": "smash"},
+    {"id": 28, "text": "Vérifier régulièrement pendant l'acte si tout va bien (check-in)", "tag": "consentement", "level": "Soft", "type": "smash"},
+    {"id": 29, "text": "Utiliser un safeword clair (ROUGE = arrêt immédiat)", "tag": "consentement", "level": "Medium", "type": "smash"},
+    {"id": 30, "text": "Pouvoir dire 'stop' ou 'ralentis' à n'importe quel moment sans justification", "tag": "consentement", "level": "Soft", "type": "smash"},
 
-    # HARD (33-55)
-    {"id": 33, "text": "Levrette forte et profonde", "tag": "penetration", "level": "Hard", "type": "smash"},
-    {"id": 34, "text": "Pénétration anale douce et progressive", "tag": "anal", "level": "Hard", "type": "smash"},
-    {"id": 35, "text": "Se faire attacher avec des menottes ou foulards", "tag": "bdsm", "level": "Hard", "type": "smash"},
-    {"id": 36, "text": "Fessées plus marquantes et répétées", "tag": "bdsm", "level": "Hard", "type": "smash"},
-    {"id": 37, "text": "Deepthroat intense", "tag": "oral", "level": "Hard", "type": "smash"},
-    {"id": 38, "text": "Éjaculation faciale ou sur les seins", "tag": "facial", "level": "Hard", "type": "smash"},
-    {"id": 39, "text": "Rough sex (violent et bestial de manière consentie)", "tag": "hard", "level": "Hard", "type": "smash"},
-    {"id": 40, "text": "Light choking (main légère sur la gorge)", "tag": "hard", "level": "Hard", "type": "smash"},
-    {"id": 41, "text": "Filmer ou se prendre en photo pendant l'acte", "tag": "exhib", "level": "Hard", "type": "smash"},
-    {"id": 42, "text": "Wax play (cire chaude sur la peau)", "tag": "bdsm", "level": "Hard", "type": "smash"},
-    {"id": 43, "text": "Pegging (elle sodomise lui avec un strap-on)", "tag": "pegging", "level": "Hard", "type": "smash"},
-    {"id": 44, "text": "Rimjob (lécher l'anus)", "tag": "oral", "level": "Hard", "type": "smash"},
-    {"id": 45, "text": "Double pénétration (pénis + jouet)", "tag": "double", "level": "Hard", "type": "smash"},
+    # HARD
+    {"id": 31, "text": "Levrette forte et profonde", "tag": "penetration", "level": "Hard", "type": "smash"},
+    {"id": 32, "text": "Pénétration anale douce et progressive", "tag": "anal", "level": "Hard", "type": "smash"},
+    {"id": 33, "text": "Se faire attacher avec des menottes ou foulards", "tag": "bdsm", "level": "Hard", "type": "smash"},
+    {"id": 34, "text": "Fessées plus marquantes et répétées", "tag": "bdsm", "level": "Hard", "type": "smash"},
+    {"id": 35, "text": "Deepthroat intense", "tag": "oral", "level": "Hard", "type": "smash"},
+    {"id": 36, "text": "Éjaculation faciale ou sur les seins", "tag": "facial", "level": "Hard", "type": "smash"},
+    {"id": 37, "text": "Rough sex (violent et bestial de manière consentie)", "tag": "hard", "level": "Hard", "type": "smash"},
+    {"id": 38, "text": "Light choking (main légère sur la gorge)", "tag": "hard", "level": "Hard", "type": "smash"},
+    {"id": 39, "text": "Filmer ou se prendre en photo pendant l'acte", "tag": "exhib", "level": "Hard", "type": "smash"},
+    {"id": 40, "text": "Wax play (cire chaude sur la peau)", "tag": "bdsm", "level": "Hard", "type": "smash"},
 
     # Choix multiple 3
-    {"id": 46, "text": "Quelle est ta position préférée quand c'est plus hard ?", "tag": "penetration", "level": "Hard", "type": "choice",
+    {"id": 41, "text": "Quelle est ta position préférée quand c'est plus hard ?", "tag": "penetration", "level": "Hard", "type": "choice",
      "options": ["Levrette forte", "Doggy style intense", "Cowgirl rapide", "Debout porté", "Autre"]},
 
-    # VERY HARD / EXTREME (47-70)
-    {"id": 47, "text": "Pénétration anale très intense et profonde", "tag": "anal", "level": "Very Hard", "type": "smash"},
-    {"id": 48, "text": "Fisting vaginal ou anal", "tag": "extreme", "level": "Very Hard", "type": "smash"},
-    {"id": 49, "text": "Golden shower (uriner sur l'autre ou se faire uriner dessus)", "tag": "extreme", "level": "Very Hard", "type": "smash"},
-    {"id": 50, "text": "Candaulisme (regarder l'autre avec quelqu'un d'autre)", "tag": "voyeur", "level": "Very Hard", "type": "smash"},
-    {"id": 51, "text": "Humiliation légère consentie (insultes sexuelles)", "tag": "bdsm", "level": "Very Hard", "type": "smash"},
-    {"id": 52, "text": "Consensual Non-Consent (CNC - viol fantasy avec safeword)", "tag": "extreme", "level": "Very Hard", "type": "smash"},
-    {"id": 53, "text": "Sexe pendant les règles avec creampie", "tag": "tabou", "level": "Very Hard", "type": "smash"},
-    {"id": 54, "text": "Utiliser des poppers pendant l'acte", "tag": "extreme", "level": "Very Hard", "type": "smash"},
-    {"id": 55, "text": "Double pénétration anale + vaginale", "tag": "extreme", "level": "Very Hard", "type": "smash"},
-    {"id": 56, "text": "Face sitting (s'asseoir sur le visage pour se faire lécher)", "tag": "oral", "level": "Hard", "type": "smash"},
-    {"id": 57, "text": "Bondage avec corde", "tag": "bdsm", "level": "Hard", "type": "smash"},
-    {"id": 58, "text": "Orgasm denial (refuser l'orgasme longtemps)", "tag": "hard", "level": "Hard", "type": "smash"},
-    {"id": 59, "text": "Breeding fantasy (fantasme de se faire remplir)", "tag": "hard", "level": "Hard", "type": "smash"},
-    {"id": 60, "text": "Humiliation forte et jeux de dégradation", "tag": "extreme", "level": "Extreme", "type": "smash"},
+    # VERY HARD
+    {"id": 42, "text": "Pénétration anale très intense et profonde", "tag": "anal", "level": "Very Hard", "type": "smash"},
+    {"id": 43, "text": "Fisting vaginal ou anal", "tag": "extreme", "level": "Very Hard", "type": "smash"},
+    {"id": 44, "text": "Golden shower (uriner sur l'autre ou se faire uriner dessus)", "tag": "extreme", "level": "Very Hard", "type": "smash"},
+    {"id": 45, "text": "Candaulisme (regarder l'autre avec quelqu'un)", "tag": "voyeur", "level": "Very Hard", "type": "smash"},
+    {"id": 46, "text": "Humiliation légère consentie", "tag": "bdsm", "level": "Very Hard", "type": "smash"},
+    {"id": 47, "text": "Consensual Non-Consent (CNC - viol fantasy)", "tag": "extreme", "level": "Very Hard", "type": "smash"},
+    {"id": 48, "text": "Pegging (elle sodomise lui avec strap-on)", "tag": "pegging", "level": "Very Hard", "type": "smash"},
+    {"id": 49, "text": "Rimjob (lécher l'anus)", "tag": "oral", "level": "Very Hard", "type": "smash"},
+    {"id": 50, "text": "Double pénétration (pénis + jouet)", "tag": "double", "level": "Very Hard", "type": "smash"},
 
     # Choix multiple 4
-    {"id": 61, "text": "Quelle pratique anal te fait le plus envie ?", "tag": "anal", "level": "Very Hard", "type": "choice",
+    {"id": 51, "text": "Quelle pratique anal te fait le plus envie ?", "tag": "anal", "level": "Very Hard", "type": "choice",
      "options": ["Plug anal", "Pénétration douce", "Pénétration intense", "Rimjob", "Aucune"]},
 
-    # Consentement supplémentaires
-    {"id": 62, "text": "Discuter à l'avance des limites dures de chacun", "tag": "consentement", "level": "Soft", "type": "smash"},
-    {"id": 63, "text": "Faire un débrief après la session pour améliorer la prochaine fois", "tag": "consentement", "level": "Soft", "type": "smash"},
+    # Consentement + HARD / EXTREME
+    {"id": 52, "text": "Discuter à l'avance des limites dures de chacun", "tag": "consentement", "level": "Soft", "type": "smash"},
+    {"id": 53, "text": "Faire un débrief après la session", "tag": "consentement", "level": "Soft", "type": "smash"},
+    {"id": 54, "text": "Se faire attacher et utiliser comme objet sexuel", "tag": "bdsm", "level": "Very Hard", "type": "smash"},
+    {"id": 55, "text": "Sexe anal suivi immédiatement d'un creampie vaginal", "tag": "tabou", "level": "Extreme", "type": "smash"},
+    {"id": 56, "text": "Jeux de douleur plus forte (pinces à seins, morsures)", "tag": "extreme", "level": "Very Hard", "type": "smash"},
+    {"id": 57, "text": "Gangbang fantasy", "tag": "extreme", "level": "Extreme", "type": "smash"},
+    {"id": 58, "text": "Jeu de chasteté avec cage à pénis", "tag": "bdsm", "level": "Extreme", "type": "smash"},
+    {"id": 59, "text": "Public play avec vibro télécommandé en public", "tag": "exhib", "level": "Extreme", "type": "smash"},
+    {"id": 60, "text": "Choking plus marqué avec accord préalable", "tag": "hard", "level": "Very Hard", "type": "smash"},
 
-    # 64-100 : Questions concrètes variées
-    {"id": 64, "text": "Se faire attacher et utiliser comme objet sexuel", "tag": "bdsm", "level": "Very Hard", "type": "smash"},
-    {"id": 65, "text": "Sexe anal suivi immédiatement d'un creampie vaginal", "tag": "tabou", "level": "Extreme", "type": "smash"},
-    {"id": 66, "text": "Jeux de douleur plus forte (pinces à seins, morsures)", "tag": "extreme", "level": "Very Hard", "type": "smash"},
-    {"id": 67, "text": "Gangbang fantasy (se faire prendre par plusieurs personnes)", "tag": "extreme", "level": "Extreme", "type": "smash"},
-    {"id": 68, "text": "Jeu de chasteté avec cage à pénis", "tag": "bdsm", "level": "Extreme", "type": "smash"},
-    {"id": 69, "text": "Public play avec vibro télécommandé", "tag": "exhib", "level": "Extreme", "type": "smash"},
-    {"id": 70, "text": "Choking plus marqué avec accord préalable", "tag": "hard", "level": "Very Hard", "type": "smash"},
+    # Choix multiple 5
+    {"id": 61, "text": "Quelle est ta pratique BDSM préférée ?", "tag": "bdsm", "level": "Hard", "type": "choice",
+     "options": ["Fessées", "Attacher", "Choking léger", "Wax play", "Humiliation"]},
+
+    # 62-100 : Questions uniques et variées
+    {"id": 62, "text": "Se faire marquer avec des morsures et suçons visibles", "tag": "bdsm", "level": "Hard", "type": "smash"},
+    {"id": 63, "text": "Face sitting (s'asseoir sur le visage pour se faire lécher)", "tag": "oral", "level": "Hard", "type": "smash"},
+    {"id": 64, "text": "Bondage avec corde", "tag": "bdsm", "level": "Hard", "type": "smash"},
+    {"id": 65, "text": "Orgasm denial (refuser l'orgasme pendant longtemps)", "tag": "hard", "level": "Hard", "type": "smash"},
+    {"id": 66, "text": "Praise kink (se faire complimenter excessivement pendant le sexe)", "tag": "bdsm", "level": "Medium", "type": "smash"},
+    {"id": 67, "text": "Blindfold + écouteurs (priver la vue et l'ouïe)", "tag": "bdsm", "level": "Medium", "type": "smash"},
+    {"id": 68, "text": "Creampie eating (lécher le sperme après éjaculation intérieure)", "tag": "tabou", "level": "Very Hard", "type": "smash"},
+    {"id": 69, "text": "Sexe dans un lieu public avec fort risque d'être surpris", "tag": "exhib", "level": "Hard", "type": "smash"},
+    {"id": 70, "text": "Utiliser des pinces à seins pendant la pénétration", "tag": "bdsm", "level": "Hard", "type": "smash"},
+
+    # Choix multiple 6
+    {"id": 71, "text": "Parmi ces pratiques, laquelle t'excite le plus en ce moment ?", "tag": "hard", "level": "Hard", "type": "choice",
+     "options": ["Anal intense", "Rough sex", "BDSM léger", "Trio fantasy", "Golden shower"]},
+
+    {"id": 72, "text": "Se faire sodomiser tout en se faisant sucer", "tag": "double", "level": "Very Hard", "type": "smash"},
+    {"id": 73, "text": "Multiple orgasmes forcés pour elle", "tag": "hard", "level": "Very Hard", "type": "smash"},
+    {"id": 74, "text": "Après l'orgasme : se faire nettoyer par l'autre avec la langue", "tag": "tabou", "level": "Extreme", "type": "smash"},
+    {"id": 75, "text": "Jeux de température (glaçons et cire chaude alternés)", "tag": "sensuel", "level": "Hard", "type": "smash"},
+    {"id": 76, "text": "Sexe toute la nuit sans dormir", "tag": "hard", "level": "Hard", "type": "smash"},
+    {"id": 77, "text": "Fantasme de prostitution (payer ou se faire payer)", "tag": "roleplay", "level": "Very Hard", "type": "smash"},
+    {"id": 78, "text": "Age play / Daddy-Mommy roleplay", "tag": "roleplay", "level": "Very Hard", "type": "smash"},
+    {"id": 79, "text": "Utiliser un glory hole (fantasme)", "tag": "exhib", "level": "Extreme", "type": "smash"},
+    {"id": 80, "text": "Se faire marquer avec des morsures très visibles", "tag": "bdsm", "level": "Hard", "type": "smash"},
+
+    # Choix multiple 7
+    {"id": 81, "text": "Quelle est ta plus grande envie taboue en ce moment ?", "tag": "tabou", "level": "Very Hard", "type": "choice",
+     "options": ["Sexe pendant les règles", "Golden shower", "CNC", "Creampie eating", "Autre"]},
+
+    {"id": 82, "text": "Se faire attacher les mains dans le dos et se faire utiliser", "tag": "bdsm", "level": "Very Hard", "type": "smash"},
+    {"id": 83, "text": "Double pénétration anale + vaginale", "tag": "extreme", "level": "Extreme", "type": "smash"},
+    {"id": 84, "text": "Jeux d'humiliation forte (se faire traiter comme un objet)", "tag": "extreme", "level": "Extreme", "type": "smash"},
+    {"id": 85, "text": "Sexe violent et passionné avec tirage de cheveux", "tag": "hard", "level": "Hard", "type": "smash"},
+    {"id": 86, "text": "Utiliser des poppers pendant une pénétration anale", "tag": "extreme", "level": "Very Hard", "type": "smash"},
+    {"id": 87, "text": "Fantasme d'inceste roleplay (très tabou)", "tag": "tabou", "level": "Extreme", "type": "smash"},
+    {"id": 88, "text": "Se faire pisser dessus pendant le sexe", "tag": "extreme", "level": "Extreme", "type": "smash"},
+    {"id": 89, "text": "Scat play (jeux avec les excréments)", "tag": "extreme", "level": "Extreme", "type": "smash"},
+    {"id": 90, "text": "Se faire filmer en train de jouir très fort", "tag": "exhib", "level": "Hard", "type": "smash"},
+
+    # Choix multiple 8
+    {"id": 91, "text": "Quelle est ta limite la plus dure à ne jamais franchir ?", "tag": "consentement", "level": "Soft", "type": "choice",
+     "options": ["Scat", "Sang", "Enfants", "Animaux", "Aucune idée"]},
+
+    {"id": 92, "text": "Faire l'amour toute la nuit sans dormir", "tag": "hard", "level": "Hard", "type": "smash"},
+    {"id": 93, "text": "Se faire sodomiser tout en se faisant lécher le clitoris", "tag": "double", "level": "Very Hard", "type": "smash"},
+    {"id": 94, "text": "Utiliser un strap-on pour sodomiser son partenaire", "tag": "pegging", "level": "Very Hard", "type": "smash"},
+    {"id": 95, "text": "Jeux de respiration contrôlée (breath play)", "tag": "extreme", "level": "Extreme", "type": "smash"},
+    {"id": 96, "text": "Se faire attacher et bander les yeux pendant plusieurs heures", "tag": "bdsm", "level": "Very Hard", "type": "smash"},
+    {"id": 97, "text": "Fantasme de viol consensuel très réaliste", "tag": "extreme", "level": "Extreme", "type": "smash"},
+    {"id": 98, "text": "Multiple orgasmes forcés jusqu'à supplier d'arrêter", "tag": "hard", "level": "Very Hard", "type": "smash"},
+    {"id": 99, "text": "Se faire uriner dans la bouche", "tag": "extreme", "level": "Extreme", "type": "smash"},
+    {"id": 100, "text": "Tout explorer ensemble sans tabou tant que le consentement est clair", "tag": "love", "level": "Soft", "type": "smash"},
 ]
 
-# Compléter jusqu'à 100 avec des questions concrètes
-for i in range(71, 101):
-    if i % 10 == 0:
-        QUESTIONS.append({
-            "id": i,
-            "text": "Parmi ces pratiques, laquelle t'excite le plus en ce moment ?",
-            "tag": "hard",
-            "level": "Hard",
-            "type": "choice",
-            "options": ["Anal intense", "Rough sex", "BDSM", "Trio fantasy", "Golden shower"]
-        })
-    else:
-        QUESTIONS.append({
-            "id": i,
-            "text": "Se faire marquer avec des morsures et suçons visibles",
-            "tag": "bdsm",
-            "level": "Hard",
-            "type": "smash"
-        })  # Tu peux me dire si tu veux que je varie plus cette partie
-
-# --- FONCTIONS & INTERFACE (le reste reste identique) ---
+# --- FONCTIONS ---
 def load_all_questions():
     c.execute("SELECT id, text, tag, level FROM custom_questions")
     custom = [{"id": row[0] + 1000, "text": row[1], "tag": row[2], "level": row[3], "type": "smash"} for row in c.fetchall()]
@@ -169,10 +194,10 @@ def get_matches():
 def reset_db():
     c.execute("DELETE FROM answers")
     conn.commit()
-    st.success("✅ Tout a été réinitialisé !")
+    st.success("✅ Tout a été réinitialisé avec succès !")
     st.rerun()
 
-# --- INTERFACE (inchangée) ---
+# --- INTERFACE ---
 st.title("🔥 Smash or Pass – Notre Univers Coquin 2026")
 
 st.markdown("### Qui tient le téléphone ? 📱")
@@ -212,7 +237,7 @@ if next_q:
                 st.rerun()
         with col2:
             if st.button("❤️ SMASH", type="primary", use_container_width=True):
-                comfort = st.slider("Niveau de confort (1-5)", 1, 5, 4, key=f"comf_{next_q['id']}")
+                comfort = st.slider("Niveau de confort (1 = pas à l'aise → 5 = très excité)", 1, 5, 4, key=f"comf_{next_q['id']}")
                 save_answer(user, next_q["id"], "smash", comfort)
                 st.success("Smash enregistré !")
                 st.rerun()
