@@ -1,6 +1,5 @@
 import streamlit as st
 import sqlite3
-import plotly.express as px
 from collections import defaultdict
 
 # --- CONFIGURATION ---
@@ -37,9 +36,9 @@ c.execute('''
 ''')
 conn.commit()
 
-# --- 100 QUESTIONS PROGRESSIVES ---
+# --- 100 QUESTIONS (identiques à avant) ---
 BASE_QUESTIONS = [
-    # === NIVEAU SOFT (1-15) ===
+    # Soft (1-15)
     {"id": 1, "text": "Longs baisers profonds avec la langue pendant de longues minutes", "tag": "sensuel", "level": "Soft"},
     {"id": 2, "text": "Massage lent et sensuel de tout le corps avec de l'huile chaude", "tag": "sensuel", "level": "Soft"},
     {"id": 3, "text": "Se caresser mutuellement très longtemps sans pénétration", "tag": "sensuel", "level": "Soft"},
@@ -56,7 +55,7 @@ BASE_QUESTIONS = [
     {"id": 14, "text": "Sexe dans la douche ou le bain avec caresses", "tag": "sensuel", "level": "Soft"},
     {"id": 15, "text": "Dire des mots tendres et 'je t'aime' pendant l'acte", "tag": "love", "level": "Soft"},
 
-    # === NIVEAU MEDIUM (16-35) ===
+    # Medium (16-25)
     {"id": 16, "text": "Doggy style bien cambré", "tag": "penetration", "level": "Medium"},
     {"id": 17, "text": "Cowgirl / Reverse cowgirl en contrôlant le rythme", "tag": "penetration", "level": "Medium"},
     {"id": 18, "text": "Parler salement pendant l'acte", "tag": "parole", "level": "Medium"},
@@ -68,7 +67,7 @@ BASE_QUESTIONS = [
     {"id": 24, "text": "Sexe debout contre un mur", "tag": "penetration", "level": "Medium"},
     {"id": 25, "text": "Regarder l'autre se masturber jusqu'à l'orgasme", "tag": "voyeur", "level": "Medium"},
 
-    # === NIVEAU HARD (26-50) ===
+    # Hard (26-45)
     {"id": 26, "text": "Levrette forte et profonde", "tag": "penetration", "level": "Hard"},
     {"id": 27, "text": "Pénétration anale douce et progressive", "tag": "anal", "level": "Hard"},
     {"id": 28, "text": "Se faire attacher avec des menottes ou foulards", "tag": "bdsm", "level": "Hard"},
@@ -90,7 +89,7 @@ BASE_QUESTIONS = [
     {"id": 44, "text": "Sexe anal plus intense", "tag": "anal", "level": "Hard"},
     {"id": 45, "text": "Orgasm control très long", "tag": "hard", "level": "Hard"},
 
-    # === NIVEAU VERY HARD (46-70) ===
+    # Very Hard + Extreme (46-60)
     {"id": 46, "text": "Pénétration anale très intense et profonde", "tag": "anal", "level": "Very Hard"},
     {"id": 47, "text": "Fisting vaginal ou anal", "tag": "extreme", "level": "Very Hard"},
     {"id": 48, "text": "Golden shower (uriner dessus ou boire)", "tag": "extreme", "level": "Very Hard"},
@@ -101,8 +100,6 @@ BASE_QUESTIONS = [
     {"id": 53, "text": "Sexe pendant les règles avec creampie", "tag": "tabou", "level": "Very Hard"},
     {"id": 54, "text": "Utiliser des poppers pendant l'acte", "tag": "extreme", "level": "Very Hard"},
     {"id": 55, "text": "Double pénétration anale + vaginale", "tag": "extreme", "level": "Very Hard"},
-
-    # === NIVEAU EXTREME + QUESTIONS OUVERTES (56-100) ===
     {"id": 56, "text": "Gangbang ou orgie (fantasme ou réel)", "tag": "extreme", "level": "Extreme"},
     {"id": 57, "text": "Scat play", "tag": "extreme", "level": "Extreme"},
     {"id": 58, "text": "Humiliation forte et jeux de dégradation", "tag": "extreme", "level": "Extreme"},
@@ -110,7 +107,7 @@ BASE_QUESTIONS = [
     {"id": 60, "text": "Public play avec vibro télécommandé", "tag": "exhib", "level": "Extreme"},
 ]
 
-# Compléter jusqu'à 100 avec des questions ouvertes / personnalisables
+# Compléter jusqu'à 100
 for i in range(61, 101):
     BASE_QUESTIONS.append({
         "id": i,
@@ -121,9 +118,7 @@ for i in range(61, 101):
 
 QUESTIONS = BASE_QUESTIONS.copy()
 
-# (Le reste du code est identique à la version précédente : fonctions, interface, limites, questions personnalisées, graphique, etc.)
-
-# --- FONCTIONS (identiques) ---
+# --- FONCTIONS ---
 def load_all_questions():
     c.execute("SELECT id, text, tag, level FROM custom_questions")
     custom = [{"id": row[0]+1000, "text": row[1], "tag": row[2], "level": row[3]} for row in c.fetchall()]
@@ -171,13 +166,13 @@ def reset_db():
     c.execute("DELETE FROM custom_questions")
     conn.commit()
 
-# --- INTERFACE (identique à la version précédente) ---
+# --- INTERFACE ---
 st.title("🔥 Smash or Pass – Notre Univers Coquin 2026")
 
 st.markdown("### Qui tient le téléphone ? 📱")
 user = st.radio("Profil :", ["Julien", "Lydie"], horizontal=True, label_visibility="collapsed")
 
-# Section Limites (inchangée)
+# Limites
 st.subheader("🚫 Limites & Consentement")
 col1, col2 = st.columns(2)
 with col1:
@@ -226,7 +221,7 @@ if next_q:
             st.rerun()
     with col_btn2:
         if st.button("❤️ SMASH", type="primary", use_container_width=True):
-            comfort = st.slider("Niveau de confort avec ce fantasme (1 → 5)", 1, 5, 4, key=f"comfort_{next_q['id']}")
+            comfort = st.slider("Niveau de confort avec ce fantasme (1 = pas à l'aise → 5 = très excité)", 1, 5, 4, key=f"comfort_{next_q['id']}")
             save_answer(user, next_q["id"], "smash", comfort)
             st.success("Smash enregistré !")
             st.rerun()
@@ -234,7 +229,7 @@ if next_q:
 else:
     st.success(f"🎉 Bravo {user} ! Tu as terminé les 100 questions.")
 
-# --- RÉSULTATS (identique) ---
+# --- RÉSULTATS ---
 st.write("---")
 st.subheader("🔥 Nos Matchs Coquins")
 
@@ -251,11 +246,11 @@ else:
         tag_count[m["tag"]] += 1
         level_count[m["level"]] += 1
 
-    if tag_count:
-        fig = px.bar(x=list(tag_count.keys()), y=list(tag_count.values()),
-                     labels={"x": "Catégorie", "y": "Smash communs"},
-                     title="Répartition de vos fantasmes communs")
-        st.plotly_chart(fig, use_container_width=True)
+    # Affichage simple sans Plotly
+    st.write("**Répartition des smash communs :**")
+    for tag, count in sorted(tag_count.items(), key=lambda x: x[1], reverse=True):
+        st.progress(count / max(len(matches), 1))
+        st.caption(f"{tag} : {count} smash")
 
     extreme_score = level_count.get("Extreme", 0) + level_count.get("Very Hard", 0)
     if extreme_score >= 8:
@@ -272,14 +267,14 @@ else:
         for m in matches:
             st.markdown(f"• **{m.get('level', '')}** — {m['text']}")
 
-# --- QUESTION PERSONNALISÉE (identique) ---
+# --- Ajout question personnalisée ---
 st.write("---")
 st.subheader("➕ Ajouter une question personnalisée")
 with st.form("custom_form"):
-    custom_text = st.text_area("Décris ton fantasme :", placeholder="Exemple : Se faire attacher et utiliser comme objet sexuel...")
+    custom_text = st.text_area("Décris ton fantasme :", placeholder="Exemple : Se faire attacher et utiliser comme objet sexuel pendant 30 minutes...")
     col_t1, col_t2 = st.columns(2)
     with col_t1:
-        custom_tag = st.selectbox("Catégorie", ["sensuel", "oral", "penetration", "anal", "bdsm", "hard", "extreme", "trois", "love", "jouet", "voyeur", "exhib"])
+        custom_tag = st.selectbox("Catégorie", ["sensuel", "oral", "penetration", "anal", "bdsm", "hard", "extreme", "trois", "love", "jouet", "voyeur", "exhib", "facial", "tabou"])
     with col_t2:
         custom_level = st.selectbox("Niveau", ["Soft", "Medium", "Hard", "Very Hard", "Extreme", "Variable"])
     
@@ -289,7 +284,7 @@ with st.form("custom_form"):
             st.success("Question ajoutée pour les deux !")
             st.rerun()
 
-# --- RESET ---
+# --- Reset ---
 with st.expander("⚙️ Paramètres"):
     if st.button("🔄 Tout effacer et recommencer", type="secondary"):
         if st.checkbox("Je confirme la suppression complète"):
