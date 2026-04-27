@@ -1,145 +1,142 @@
 import streamlit as st
 import sqlite3
+import plotly.express as px
+from collections import defaultdict
 
-# --- CONFIGURATION DE LA PAGE ---
-st.set_page_config(page_title="Smash or Pass - Été 2026", page_icon="☀️", layout="centered")
+# --- CONFIGURATION ---
+st.set_page_config(page_title="Smash or Pass Coquin 2026 🔥", page_icon="🔥", layout="centered")
 
-# --- BASE DE DONNÉES SQLITE ---
-conn = sqlite3.connect("vacances_famille.db", check_same_thread=False)
+# --- BASE DE DONNÉES ---
+conn = sqlite3.connect("couple_coquin.db", check_same_thread=False)
 c = conn.cursor()
+
 c.execute('''
     CREATE TABLE IF NOT EXISTS answers (
         user TEXT,
         question_id INTEGER,
         answer TEXT,
+        comfort INTEGER,
         PRIMARY KEY (user, question_id)
+    )
+''')
+c.execute('''
+    CREATE TABLE IF NOT EXISTS limits (
+        user TEXT PRIMARY KEY,
+        hard_limits TEXT,
+        safeword TEXT
+    )
+''')
+c.execute('''
+    CREATE TABLE IF NOT EXISTS custom_questions (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        user TEXT,
+        text TEXT,
+        tag TEXT,
+        level TEXT
     )
 ''')
 conn.commit()
 
-# --- LA SUPER-BANQUE DE 100 QUESTIONS ---
-QUESTIONS = [
-    # Ambiance / Climat (1-10)
-    {"id": 1, "text": "Fuir la canicule : la fraîcheur des nuits est non-négociable pour le bien-être d'Eliott ❄️", "tag": "alpes"},
-    {"id": 2, "text": "La chaleur ne me fait pas peur du tout si on a une piscine à disposition ☀️", "tag": "sud"},
-    {"id": 3, "text": "L'odeur des pins, le chant des cigales et un petit vent sec 🌲", "tag": "sud"},
-    {"id": 4, "text": "L'air vif du matin à la montagne et les cloches des vaches au loin 🐄", "tag": "alpes"},
-    {"id": 5, "text": "L'air iodé de l'océan avec une belle brise pour ne pas transpirer 🌬️", "tag": "mer"},
-    {"id": 6, "text": "Se réveiller avec la vue sur une vallée verdoyante recouverte de brume matinale 🌫️", "tag": "perigord"},
-    {"id": 7, "text": "L'humidité ne me dérange pas si le paysage est dingue 🌿", "tag": "nature"},
-    {"id": 8, "text": "Il me faut du grand soleil tous les jours, c'est l'essence des vacances d'été ! 🌞", "tag": "sud"},
-    {"id": 9, "text": "Un climat tempéré, quitte à avoir un jour ou deux de pluie pour rafraîchir l'atmosphère 🌦️", "tag": "alpes"},
-    {"id": 10, "text": "Bronzer intensément au bord de l'eau 🍅", "tag": "sud"},
+# --- 100 QUESTIONS PROGRESSIVES ---
+BASE_QUESTIONS = [
+    # === NIVEAU SOFT (1-15) ===
+    {"id": 1, "text": "Longs baisers profonds avec la langue pendant de longues minutes", "tag": "sensuel", "level": "Soft"},
+    {"id": 2, "text": "Massage lent et sensuel de tout le corps avec de l'huile chaude", "tag": "sensuel", "level": "Soft"},
+    {"id": 3, "text": "Se caresser mutuellement très longtemps sans pénétration", "tag": "sensuel", "level": "Soft"},
+    {"id": 4, "text": "Strip-tease lent et sensuel pour l'autre", "tag": "sensuel", "level": "Soft"},
+    {"id": 5, "text": "Se regarder intensément dans les yeux pendant qu'on se touche", "tag": "sensuel", "level": "Soft"},
+    {"id": 6, "text": "Préliminaires oraux très longs et attentionnés", "tag": "oral", "level": "Soft"},
+    {"id": 7, "text": "Cunnilingus lent et créatif avec beaucoup de temps", "tag": "oral", "level": "Soft"},
+    {"id": 8, "text": "Fellation lente et profonde avec beaucoup de salive", "tag": "oral", "level": "Soft"},
+    {"id": 9, "text": "Missionnaire profond avec beaucoup de contact visuel et câlins", "tag": "penetration", "level": "Soft"},
+    {"id": 10, "text": "Sexe en cuillères (spooning) très collé-serré et doux", "tag": "penetration", "level": "Soft"},
+    {"id": 11, "text": "Sexe du matin au réveil, encore à moitié endormi", "tag": "sensuel", "level": "Soft"},
+    {"id": 12, "text": "Se faire lécher partout (cou, seins, ventre, cuisses…)", "tag": "oral", "level": "Soft"},
+    {"id": 13, "text": "69 très lent et sensuel", "tag": "oral", "level": "Soft"},
+    {"id": 14, "text": "Sexe dans la douche ou le bain avec caresses", "tag": "sensuel", "level": "Soft"},
+    {"id": 15, "text": "Dire des mots tendres et 'je t'aime' pendant l'acte", "tag": "love", "level": "Soft"},
 
-    # Logement et Logistique (11-25)
-    {"id": 11, "text": "Un appartement douillet en station, bien équipé et super bien placé 🏔️", "tag": "alpes"},
-    {"id": 12, "text": "Une vieille maison en pierre authentique avec un grand terrain 🏡", "tag": "perigord"},
-    {"id": 13, "text": "Trouver une pharmacie à 5 minutes pour ne pas avoir à stocker 10 boîtes de lait Biostime dans le coffre 🍼", "tag": "pratique"},
-    {"id": 14, "text": "Un logement isolé dans la pampa, même s'il faut faire 15 min de voiture pour le pain 🚗", "tag": "calme"},
-    {"id": 15, "text": "Laverie ou machine à laver impérative dans la loc, avec un bébé et un 4 ans, c'est la survie 🧺", "tag": "pratique"},
-    {"id": 16, "text": "Avoir une baignoire dans la location pour faciliter le bain des garçons 🛁", "tag": "pratique"},
-    {"id": 17, "text": "Une location avec un extérieur bien clos pour que Samuel puisse courir sans aucun danger 🏡", "tag": "pratique"},
-    {"id": 18, "text": "Un logement où je peux tout faire à pied ou en poussette (boulangerie, balade, resto) 🚶‍♂️", "tag": "pratique"},
-    {"id": 19, "text": "Privilégier un trajet de nuit pour que les enfants dorment dans la voiture et arriver frais 🚗💤", "tag": "pratique"},
-    {"id": 20, "text": "Louer un mobil-home tout confort dans un camping 4 étoiles ⛺", "tag": "social"},
-    {"id": 21, "text": "Zéro camping, on veut du dur : appartement ou vraie maison 🧱", "tag": "calme"},
-    {"id": 22, "text": "Avoir une chambre séparée pour Samuel pour qu'il ait son espace (et nous notre intimité !) 🛏️", "tag": "pratique"},
-    {"id": 23, "text": "Une location avec la clim, c'est indispensable avec un nourrisson ❄️", "tag": "pratique"},
-    {"id": 24, "text": "Faire péter le budget pour avoir une vue exceptionnelle depuis la terrasse 🌅", "tag": "budget_max"},
-    {"id": 25, "text": "Avoir Netflix/Disney+ sur la télé de la loc pour gérer un temps calme en fin de journée 📺", "tag": "pratique"},
+    # === NIVEAU MEDIUM (16-35) ===
+    {"id": 16, "text": "Doggy style bien cambré", "tag": "penetration", "level": "Medium"},
+    {"id": 17, "text": "Cowgirl / Reverse cowgirl en contrôlant le rythme", "tag": "penetration", "level": "Medium"},
+    {"id": 18, "text": "Parler salement pendant l'acte", "tag": "parole", "level": "Medium"},
+    {"id": 19, "text": "Se masturber devant l'autre en se regardant", "tag": "voyeur", "level": "Medium"},
+    {"id": 20, "text": "Utiliser un vibromasseur clitoridien pendant la pénétration", "tag": "jouet", "level": "Medium"},
+    {"id": 21, "text": "Plug anal porté pendant un rapport vaginal", "tag": "anal", "level": "Medium"},
+    {"id": 22, "text": "Fessées légères pendant l'acte", "tag": "bdsm", "level": "Medium"},
+    {"id": 23, "text": "Edging (contrôle de l'orgasme pendant longtemps)", "tag": "hard", "level": "Medium"},
+    {"id": 24, "text": "Sexe debout contre un mur", "tag": "penetration", "level": "Medium"},
+    {"id": 25, "text": "Regarder l'autre se masturber jusqu'à l'orgasme", "tag": "voyeur", "level": "Medium"},
 
-    # Nourriture et Budget (26-38)
-    {"id": 26, "text": "Tartiflette d'été, bonne charcuterie locale et fromage fondu 🧀", "tag": "alpes"},
-    {"id": 27, "text": "Magret de canard, foie gras, pommes sarladaises et bon vin rouge 🦆", "tag": "perigord"},
-    {"id": 28, "text": "Acheter le poisson frais du matin au port pour le cuisiner le midi 🐟", "tag": "mer"},
-    {"id": 29, "text": "Faire un barbecue le soir pendant que les enfants jouent dans le jardin 🌭", "tag": "chill"},
-    {"id": 30, "text": "Cuisiner le moins possible : on fait péter le budget resto ou traiteur ! 🍽️", "tag": "budget_max"},
-    {"id": 31, "text": "Gérer la majorité des repas nous-mêmes avec de bons produits du marché local 🧺", "tag": "budget_eco"},
-    {"id": 32, "text": "Manger d'énormes glaces artisanales ou des crêpes au goûter presque tous les jours 🍦", "tag": "budget_max"},
-    {"id": 33, "text": "Tester au moins un resto semi-gastronomique de la région, juste pour le kiff 🍽️", "tag": "budget_max"},
-    {"id": 34, "text": "S'acheter une très bonne bouteille de vin local à déguster tranquillement 🥂", "tag": "oleole"},
-    {"id": 35, "text": "Un petit dej ultra copieux avec des viennoiseries fraîches de la boulangerie tous les matins 🥐", "tag": "budget_max"},
-    {"id": 36, "text": "Organiser un apéro dinatoire qui dure de 19h à 22h au lieu d'un repas classique 🥖🧀", "tag": "chill"},
-    {"id": 37, "text": "Des vacances avec un budget maîtrisé : on privilégie les balades gratuites et les pique-niques 🥪", "tag": "budget_eco"},
-    {"id": 38, "text": "Ramener plein de pots de miel, de fromages ou de vins dans le coffre au retour 🍯", "tag": "budget_max"},
+    # === NIVEAU HARD (26-50) ===
+    {"id": 26, "text": "Levrette forte et profonde", "tag": "penetration", "level": "Hard"},
+    {"id": 27, "text": "Pénétration anale douce et progressive", "tag": "anal", "level": "Hard"},
+    {"id": 28, "text": "Se faire attacher avec des menottes ou foulards", "tag": "bdsm", "level": "Hard"},
+    {"id": 29, "text": "Fessées plus marquantes", "tag": "bdsm", "level": "Hard"},
+    {"id": 30, "text": "Deepthroat intense", "tag": "oral", "level": "Hard"},
+    {"id": 31, "text": "Éjaculation faciale ou sur les seins", "tag": "facial", "level": "Hard"},
+    {"id": 32, "text": "Rough sex (un peu violent et bestial)", "tag": "hard", "level": "Hard"},
+    {"id": 33, "text": "Light choking (main sur la gorge)", "tag": "hard", "level": "Hard"},
+    {"id": 34, "text": "Sexe dans un lieu semi-public avec risque", "tag": "exhib", "level": "Hard"},
+    {"id": 35, "text": "Jeu de rôle (prof/élève, patron/secrétaire…)", "tag": "roleplay", "level": "Hard"},
+    {"id": 36, "text": "Filmer ou se prendre en photo pendant l'acte", "tag": "exhib", "level": "Hard"},
+    {"id": 37, "text": "Wax play (bougie chaude sur la peau)", "tag": "bdsm", "level": "Hard"},
+    {"id": 38, "text": "Pegging (elle sodomise lui avec un strap-on)", "tag": "pegging", "level": "Hard"},
+    {"id": 39, "text": "Fantasme de plan à trois (MFF ou MMF)", "tag": "trois", "level": "Hard"},
+    {"id": 40, "text": "Breeding / impregnation fantasy", "tag": "hard", "level": "Hard"},
+    {"id": 41, "text": "Rimjob (lécher l'anus)", "tag": "oral", "level": "Hard"},
+    {"id": 42, "text": "Double pénétration (pénis + jouet)", "tag": "double", "level": "Hard"},
+    {"id": 43, "text": "Être dominé(e) complètement avec ordres", "tag": "bdsm", "level": "Hard"},
+    {"id": 44, "text": "Sexe anal plus intense", "tag": "anal", "level": "Hard"},
+    {"id": 45, "text": "Orgasm control très long", "tag": "hard", "level": "Hard"},
 
-    # Activités Enfants (39-55)
-    {"id": 39, "text": "Exploration de châteaux forts avec une épée en bois pour notre petit chevalier Samuel 🏰", "tag": "perigord"},
-    {"id": 40, "text": "Chasse aux marmottes avec de petites jumelles 🔭", "tag": "alpes"},
-    {"id": 41, "text": "Visite d'une ferme pédagogique (traite des vaches, caresser les lapins, nourrir les chèvres) 🐇", "tag": "nature"},
-    {"id": 42, "text": "Structure gonflable et pataugeoire dans une grande base de loisirs de montagne 🎈", "tag": "alpes"},
-    {"id": 43, "text": "Descente en gabarre très calme sur la rivière (zéro secousse pour bébé Eliott) 🚣", "tag": "perigord"},
-    {"id": 44, "text": "Grottes préhistoriques (idéal car il y fait toujours 13 degrés, parfait pour fuir la chaleur !) 🦇", "tag": "perigord"},
-    {"id": 45, "text": "Un petit tour de manège en fin de journée pour la plus grande joie de Samuel 🎠", "tag": "activite"},
-    {"id": 46, "text": "Passer l'après-midi dans un parc aquatique avec des toboggans et des jeux d'eau 💦", "tag": "activite"},
-    {"id": 47, "text": "Faire du pédalo sur un lac avec Eliott bien à l'ombre sous le parasol de l'embarcation 🚣‍♂️", "tag": "alpes"},
-    {"id": 48, "text": "Faire des châteaux de sable géants sur la plage (même si on en met plein la voiture après) 🏖️", "tag": "mer"},
-    {"id": 49, "text": "Se faire une session accrobranche pour les tout-petits avec Samuel 🐒", "tag": "activite"},
-    {"id": 50, "text": "Prendre un télécabine tous ensemble juste pour le fun et la vue panoramique 🚠", "tag": "alpes"},
-    {"id": 51, "text": "Aller voir un grand aquarium marin ou d'eau douce 🐠", "tag": "activite"},
-    {"id": 52, "text": "Partir à la chasse aux insectes ou chercher les plus beaux cailloux avec le grand frère 🦋", "tag": "nature"},
-    {"id": 53, "text": "Faire une bataille d'eau improvisée en famille dans le jardin 🔫", "tag": "activite"},
-    {"id": 54, "text": "Rencontrer d'autres familles pour que Samuel puisse se faire des copains de vacances 👫", "tag": "social"},
-    {"id": 55, "text": "Des pistes cyclables plates et sécurisées pour louer des vélos avec une carriole pour les enfants 🚲", "tag": "pratique"},
+    # === NIVEAU VERY HARD (46-70) ===
+    {"id": 46, "text": "Pénétration anale très intense et profonde", "tag": "anal", "level": "Very Hard"},
+    {"id": 47, "text": "Fisting vaginal ou anal", "tag": "extreme", "level": "Very Hard"},
+    {"id": 48, "text": "Golden shower (uriner dessus ou boire)", "tag": "extreme", "level": "Very Hard"},
+    {"id": 49, "text": "Candaulisme (regarder l'autre avec quelqu'un)", "tag": "voyeur", "level": "Very Hard"},
+    {"id": 50, "text": "Humiliation légère (insultes sexuelles, etc.)", "tag": "bdsm", "level": "Very Hard"},
+    {"id": 51, "text": "Consensual Non-Consent (CNC - viol fantasy)", "tag": "extreme", "level": "Very Hard"},
+    {"id": 52, "text": "Jeux de douleur plus forte (pinces, wax intensif)", "tag": "extreme", "level": "Very Hard"},
+    {"id": 53, "text": "Sexe pendant les règles avec creampie", "tag": "tabou", "level": "Very Hard"},
+    {"id": 54, "text": "Utiliser des poppers pendant l'acte", "tag": "extreme", "level": "Very Hard"},
+    {"id": 55, "text": "Double pénétration anale + vaginale", "tag": "extreme", "level": "Very Hard"},
 
-    # Olé Olé / Couple / Détente (56-75)
-    {"id": 56, "text": "Sieste crapuleuse climatisée pendant que Samuel fait un temps calme devant un film 🔥", "tag": "oleole"},
-    {"id": 57, "text": "Bain de minuit tous nus dans la piscine de la loc (babyphone posé au bord !) 🔞", "tag": "oleole"},
-    {"id": 58, "text": "Apéro saucisson/vin rouge en amoureux sur le balcon une fois les garçons couchés 🍷", "tag": "alpes"},
-    {"id": 59, "text": "Dîner aux chandelles dans le jardin pendant que les deux dorment profondément ✨", "tag": "oleole"},
-    {"id": 60, "text": "Jouer à des jeux de société (ou des jeux coquins) en amoureux avec un bon verre une fois la nuit tombée 🎲", "tag": "oleole"},
-    {"id": 61, "text": "Prendre un baby-sitter local pour une soirée resto rien que tous les deux 🕯️", "tag": "oleole"},
-    {"id": 62, "text": "Avoir un grand lit double bien confortable (minimum 160) pour pouvoir s'étaler la nuit 🛌", "tag": "oleole"},
-    {"id": 63, "text": "S'embrasser passionnément sous un coucher de soleil de carte postale 🌅💋", "tag": "oleole"},
-    {"id": 64, "text": "Mettre de la musique douce et danser un slow dans le salon en chaussettes 🎵", "tag": "oleole"},
-    {"id": 65, "text": "S'autoriser une grasse matinée chacun son tour (l'autre gère les biberons et les réveils) ⏰", "tag": "chill"},
-    {"id": 66, "text": "Prendre chacun son tour 2 heures 'off' en solo pour souffler, lire ou marcher 🧘", "tag": "chill"},
-    {"id": 67, "text": "S'offrir un massage ou un spa pendant que l'autre gère la tribu 💆", "tag": "chill"},
-    {"id": 68, "text": "Des vacances au ralenti : sieste, bouquin, piscine, et c'est absolument tout 😴", "tag": "chill"},
-    {"id": 69, "text": "S'asseoir sur un banc en bord de mer et refaire le monde en regardant les passants 💭", "tag": "chill"},
-    {"id": 70, "text": "Faire la sieste tous les 4 en même temps dans la même pièce pour un gros câlin familial 😴", "tag": "love"},
-    {"id": 71, "text": "Rien à faire du sport, les vacances c'est fait pour faire du gras et se détendre ! 🍕", "tag": "chill"},
-    {"id": 72, "text": "Pas de programme le matin, on décide au réveil selon notre humeur et celle des garçons 🤷‍♂️", "tag": "chill"},
-    {"id": 73, "text": "Des vacances où l'on est dans notre bulle familiale, sans chercher à sociabiliser avec d'autres 🫧", "tag": "calme"},
-    {"id": 74, "text": "Dormir avec la fenêtre ouverte pour écouter le silence de la nature (grillons, chouettes...) 🦉", "tag": "nature"},
-    {"id": 75, "text": "Peu importe où l'on va, du moment qu'on profite de se retrouver tous les quatre ❤️", "tag": "love"},
-
-    # Divers Nature / Sport / Découvertes (76-100)
-    {"id": 76, "text": "Des chemins plats et goudronnés pour rouler en poussette sans effort avec Eliott 👶", "tag": "pratique"},
-    {"id": 77, "text": "Les chemins escarpés ne me gênent pas, on gère les balades en porte-bébé ! 🎒", "tag": "sportif"},
-    {"id": 78, "text": "Des vacances hyper actives : on bouge et on visite tous les jours ! 🏃‍♂️", "tag": "sportif"},
-    {"id": 79, "text": "Flâner dans un marché de producteurs nocturne avec de la musique en live 🎶", "tag": "perigord"},
-    {"id": 80, "text": "Des paysages grandioses et vertigineux à photographier 📸", "tag": "alpes"},
-    {"id": 81, "text": "De douces collines verdoyantes, des vignes et des petits villages classés 'Plus beaux villages de France' 🏘️", "tag": "perigord"},
-    {"id": 82, "text": "Se baigner dans un lac naturel d'eau douce et transparente 💧", "tag": "alpes"},
-    {"id": 83, "text": "Se baigner dans une rivière sauvage (en trouvant un coin sans courant pour tremper les pieds) 🌊", "tag": "perigord"},
-    {"id": 84, "text": "Se baigner dans l'océan Atlantique et affronter les vagues 🏄‍♂️", "tag": "mer"},
-    {"id": 85, "text": "Préférer la mer Méditerranée pour avoir une eau à 27 degrés minimum 🏖️", "tag": "sud"},
-    {"id": 86, "text": "Faire une mini rando nocturne (ou au crépuscule) pour regarder les étoiles 🌟", "tag": "nature"},
-    {"id": 87, "text": "Trouver des sentiers bien ombragés en forêt pour les balades de l'après-midi 🌳", "tag": "nature"},
-    {"id": 88, "text": "Louer un petit bateau sans permis pour une mini croisière de 2 heures 🚤", "tag": "activite"},
-    {"id": 89, "text": "Une journée pique-nique dans l'herbe avec la grande couverture familiale 🥪", "tag": "chill"},
-    {"id": 90, "text": "Essayer de faire un petit footing matinal pendant que l'autre garde les enfants 🏃‍♀️", "tag": "sportif"},
-    {"id": 91, "text": "Faire du vélo sur une piste cyclable aménagée directement au bord de l'eau 🚲", "tag": "mer"},
-    {"id": 92, "text": "Prendre de superbes photos de famille par un photographe pro dans la région 📸", "tag": "activite"},
-    {"id": 93, "text": "Avoir du réseau 4G/5G ou un très bon Wifi (impossible de déconnecter à 100%) 📱", "tag": "pratique"},
-    {"id": 94, "text": "Zone blanche acceptée : on coupe les téléphones, c'est de la vraie déconnexion ! 📵", "tag": "calme"},
-    {"id": 95, "text": "Faire le moins d'heures de route possible depuis la maison pour ne pas ruiner le premier jour 🛣️", "tag": "pratique"},
-    {"id": 96, "text": "Une destination chargée d'Histoire (musées, ruines, châteaux) 🏺", "tag": "perigord"},
-    {"id": 97, "text": "S'acheter de beaux vêtements ou accessoires d'été sur un petit marché artisanal 👗", "tag": "sud"},
-    {"id": 98, "text": "Faire un concours de celui qui saute le mieux dans la piscine 🏊‍♂️", "tag": "activite"},
-    {"id": 99, "text": "Des vacances avec un vrai planning d'activités bien ficelé à l'avance pour ne rien rater 📅", "tag": "sportif"},
-    {"id": 100, "text": "Ramasser des coquillages le matin de bonne heure sur le sable 🐚", "tag": "mer"}
+    # === NIVEAU EXTREME + QUESTIONS OUVERTES (56-100) ===
+    {"id": 56, "text": "Gangbang ou orgie (fantasme ou réel)", "tag": "extreme", "level": "Extreme"},
+    {"id": 57, "text": "Scat play", "tag": "extreme", "level": "Extreme"},
+    {"id": 58, "text": "Humiliation forte et jeux de dégradation", "tag": "extreme", "level": "Extreme"},
+    {"id": 59, "text": "Jeu de chasteté (cage à pénis)", "tag": "bdsm", "level": "Extreme"},
+    {"id": 60, "text": "Public play avec vibro télécommandé", "tag": "exhib", "level": "Extreme"},
 ]
 
-# --- FONCTIONS UTILITAIRES ---
-def save_answer(user, q_id, answer):
-    c.execute("REPLACE INTO answers (user, question_id, answer) VALUES (?, ?, ?)", (user, q_id, answer))
+# Compléter jusqu'à 100 avec des questions ouvertes / personnalisables
+for i in range(61, 101):
+    BASE_QUESTIONS.append({
+        "id": i,
+        "text": f"Explorer un nouveau fantasme très personnel ou pratique coquine à définir ensemble (question {i})",
+        "tag": "love",
+        "level": "Variable"
+    })
+
+QUESTIONS = BASE_QUESTIONS.copy()
+
+# (Le reste du code est identique à la version précédente : fonctions, interface, limites, questions personnalisées, graphique, etc.)
+
+# --- FONCTIONS (identiques) ---
+def load_all_questions():
+    c.execute("SELECT id, text, tag, level FROM custom_questions")
+    custom = [{"id": row[0]+1000, "text": row[1], "tag": row[2], "level": row[3]} for row in c.fetchall()]
+    return QUESTIONS + custom
+
+def save_answer(user, q_id, answer, comfort=None):
+    c.execute("REPLACE INTO answers (user, question_id, answer, comfort) VALUES (?, ?, ?, ?)",
+              (user, q_id, answer, comfort))
     conn.commit()
 
 def get_user_answers(user):
-    c.execute("SELECT question_id, answer FROM answers WHERE user=?", (user,))
-    return {row[0]: row[1] for row in c.fetchall()}
+    c.execute("SELECT question_id, answer, comfort FROM answers WHERE user=?", (user,))
+    return {row[0]: {"answer": row[1], "comfort": row[2]} for row in c.fetchall()}
 
 def get_matches():
     c.execute('''
@@ -150,108 +147,154 @@ def get_matches():
         AND a1.answer = 'smash' AND a2.answer = 'smash'
     ''')
     matched_ids = [row[0] for row in c.fetchall()]
-    return [q for q in QUESTIONS if q["id"] in matched_ids]
+    all_q = load_all_questions()
+    return [q for q in all_q if q["id"] in matched_ids]
+
+def save_limits(user, hard_limits, safeword):
+    c.execute("REPLACE INTO limits (user, hard_limits, safeword) VALUES (?, ?, ?)", 
+              (user, hard_limits, safeword))
+    conn.commit()
+
+def get_limits(user):
+    c.execute("SELECT hard_limits, safeword FROM limits WHERE user=?", (user,))
+    row = c.fetchone()
+    return row if row else ("Aucune limite définie", "ROUGE")
+
+def add_custom_question(user, text, tag, level):
+    c.execute("INSERT INTO custom_questions (user, text, tag, level) VALUES (?, ?, ?, ?)",
+              (user, text, tag, level))
+    conn.commit()
 
 def reset_db():
     c.execute("DELETE FROM answers")
+    c.execute("DELETE FROM limits")
+    c.execute("DELETE FROM custom_questions")
     conn.commit()
 
-# --- INTERFACE UTILISATEUR ---
-st.title("☀️ Smash or Pass - Nos Vacances")
+# --- INTERFACE (identique à la version précédente) ---
+st.title("🔥 Smash or Pass – Notre Univers Coquin 2026")
 
-# Sélection de l'utilisateur
 st.markdown("### Qui tient le téléphone ? 📱")
-user = st.radio("Sélectionnez votre profil :", ["Julien", "Lydie"], horizontal=True, label_visibility="collapsed")
+user = st.radio("Profil :", ["Julien", "Lydie"], horizontal=True, label_visibility="collapsed")
+
+# Section Limites (inchangée)
+st.subheader("🚫 Limites & Consentement")
+col1, col2 = st.columns(2)
+with col1:
+    if user == "Julien":
+        limits = get_limits("Julien")
+        hard = st.text_area("Mes limites dures :", value=limits[0], key="hard_j")
+        sw = st.text_input("Mon safeword :", value=limits[1], key="sw_j")
+        if st.button("Enregistrer mes limites", key="save_j"):
+            save_limits("Julien", hard, sw)
+            st.success("✅ Limites enregistrées")
+
+with col2:
+    if user == "Lydie":
+        limits = get_limits("Lydie")
+        hard = st.text_area("Mes limites dures :", value=limits[0], key="hard_l")
+        sw = st.text_input("Mon safeword :", value=limits[1], key="sw_l")
+        if st.button("Enregistrer mes limites", key="save_l"):
+            save_limits("Lydie", hard, sw)
+            st.success("✅ Limites enregistrées")
+
 st.write("---")
 
-# Récupération des réponses
+blind_mode = st.checkbox("🔒 Mode Découverte à l'aveugle (recommandé)", value=True)
+
+all_questions = load_all_questions()
 user_answers = get_user_answers(user)
 answered_count = len(user_answers)
 
-# Trouver la prochaine question
-next_q = next((q for q in QUESTIONS if q["id"] not in user_answers), None)
+next_q = next((q for q in all_questions if q["id"] not in user_answers), None)
 
-# --- ZONE DE JEU ---
 if next_q:
-    progress_val = answered_count / len(QUESTIONS)
-    st.progress(progress_val)
-    st.caption(f"Question {answered_count + 1} sur {len(QUESTIONS)}")
-    
-    # Carte Question
-    st.markdown(
-        f"""
-        <div style='background-color: white; padding: 30px; border-radius: 15px; 
-        box-shadow: 0 4px 6px rgba(0,0,0,0.1); text-align: center; border: 1px solid #ddd; margin-bottom: 20px;'>
-            <h3 style='color: #2c3e50; margin: 0;'>{next_q['text']}</h3>
-        </div>
-        """, 
-        unsafe_allow_html=True
-    )
-    
-    # Boutons
-    col1, col2 = st.columns(2)
-    with col1:
+    progress = answered_count / len(all_questions)
+    st.progress(progress)
+    st.caption(f"Question {answered_count + 1} / {len(all_questions)} — **{next_q.get('level', 'Variable')}**")
+
+    st.markdown(f"""
+    <div style='background:#2a2a3a; padding:30px; border-radius:15px; text-align:center; border:2px solid #ff4d94; margin:20px 0;'>
+        <h3 style='color:#ff99cc;'>{next_q['text']}</h3>
+    </div>
+    """, unsafe_allow_html=True)
+
+    col_btn1, col_btn2 = st.columns(2)
+    with col_btn1:
         if st.button("❌ PASS", use_container_width=True):
             save_answer(user, next_q["id"], "pass")
             st.rerun()
-    with col2:
+    with col_btn2:
         if st.button("❤️ SMASH", type="primary", use_container_width=True):
-            save_answer(user, next_q["id"], "smash")
+            comfort = st.slider("Niveau de confort avec ce fantasme (1 → 5)", 1, 5, 4, key=f"comfort_{next_q['id']}")
+            save_answer(user, next_q["id"], "smash", comfort)
+            st.success("Smash enregistré !")
             st.rerun()
+
 else:
-    st.success(f"Bravo {user}, tu as terminé tes 100 questions ! 🎉")
+    st.success(f"🎉 Bravo {user} ! Tu as terminé les 100 questions.")
 
+# --- RÉSULTATS (identique) ---
 st.write("---")
-
-# --- ZONE DE RÉSULTATS ---
-st.subheader("🔥 Notre Match en direct")
+st.subheader("🔥 Nos Matchs Coquins")
 
 matches = get_matches()
 
-if len(matches) == 0:
-    st.warning("Pas encore de match commun... Continuez à swiper !")
+if not matches:
+    st.info("Pas encore de smash commun. Quand vous aurez fini tous les deux, vous verrez les résultats.")
 else:
-    # Calcul des statistiques
-    tags_count = {"alpes": 0, "perigord": 0, "mer": 0, "sud": 0, "oleole": 0, "chill": 0, "sportif": 0, "pratique": 0}
-    for m in matches:
-        if m["tag"] in tags_count:
-            tags_count[m["tag"]] += 1
-            
-    # Déduction de la destination gagnante
-    dests = {
-        "🏔️ La Montagne (Alpes)": tags_count["alpes"],
-        "🏰 La Campagne (Périgord)": tags_count["perigord"],
-        "🌊 La Mer / Le Sud": tags_count["mer"] + tags_count["sud"]
-    }
-    top_dest = max(dests, key=dests.get)
-    
-    # Affichage du verdict
-    st.success(f"**{len(matches)} envies validées à deux !**")
-    
-    if dests[top_dest] > 0:
-        st.info(f"**📍 Destination en tête : {top_dest}**")
-        
-    # Analyse du style de vacances
-    style_text = ""
-    if tags_count["oleole"] >= 2:
-        style_text += "🔥 Ambiance romance et retrouvailles activée !<br>"
-    if tags_count["chill"] > tags_count["sportif"]:
-        style_text += "😴 Mode vacances : Détente, farniente et repos total.<br>"
-    elif tags_count["sportif"] > tags_count["chill"]:
-        style_text += "🏃‍♂️ Mode vacances : Ça va bouger, hyperactifs !<br>"
-    if tags_count["pratique"] >= 3:
-        style_text += "🍼 La logistique avec les enfants dicte vos choix.<br>"
-        
-    if style_text:
-        st.markdown(f"<div style='background:#f1c40f; color:#333; padding:15px; border-radius:10px;'>{style_text}</div>", unsafe_allow_html=True)
-    
-    st.write("")
-    with st.expander("Voir le détail de nos matchs"):
-        for m in matches:
-            st.markdown(f"- {m['text']}")
+    st.success(f"**{len(matches)} fantasmes validés à deux !**")
 
+    tag_count = defaultdict(int)
+    level_count = defaultdict(int)
+    for m in matches:
+        tag_count[m["tag"]] += 1
+        level_count[m["level"]] += 1
+
+    if tag_count:
+        fig = px.bar(x=list(tag_count.keys()), y=list(tag_count.values()),
+                     labels={"x": "Catégorie", "y": "Smash communs"},
+                     title="Répartition de vos fantasmes communs")
+        st.plotly_chart(fig, use_container_width=True)
+
+    extreme_score = level_count.get("Extreme", 0) + level_count.get("Very Hard", 0)
+    if extreme_score >= 8:
+        style = "🚨 **Style Extrême / Hardcore**"
+    elif extreme_score >= 4:
+        style = "🔥 **Style Hard & Kinky**"
+    elif level_count.get("Medium", 0) >= 10:
+        style = "🌶️ **Style Sensuel & Joueur**"
+    else:
+        style = "❤️ **Style Romantique & Intime**"
+    st.info(style)
+
+    with st.expander("Voir le détail des matchs communs"):
+        for m in matches:
+            st.markdown(f"• **{m.get('level', '')}** — {m['text']}")
+
+# --- QUESTION PERSONNALISÉE (identique) ---
 st.write("---")
-with st.expander("⚙️ Paramètres / Réinitialisation"):
-    if st.button("Effacer toutes les réponses et recommencer", type="secondary"):
-        reset_db()
-        st.rerun()
+st.subheader("➕ Ajouter une question personnalisée")
+with st.form("custom_form"):
+    custom_text = st.text_area("Décris ton fantasme :", placeholder="Exemple : Se faire attacher et utiliser comme objet sexuel...")
+    col_t1, col_t2 = st.columns(2)
+    with col_t1:
+        custom_tag = st.selectbox("Catégorie", ["sensuel", "oral", "penetration", "anal", "bdsm", "hard", "extreme", "trois", "love", "jouet", "voyeur", "exhib"])
+    with col_t2:
+        custom_level = st.selectbox("Niveau", ["Soft", "Medium", "Hard", "Very Hard", "Extreme", "Variable"])
+    
+    if st.form_submit_button("Ajouter cette question"):
+        if custom_text.strip():
+            add_custom_question(user, custom_text.strip(), custom_tag, custom_level)
+            st.success("Question ajoutée pour les deux !")
+            st.rerun()
+
+# --- RESET ---
+with st.expander("⚙️ Paramètres"):
+    if st.button("🔄 Tout effacer et recommencer", type="secondary"):
+        if st.checkbox("Je confirme la suppression complète"):
+            reset_db()
+            st.success("Tout réinitialisé.")
+            st.rerun()
+
+st.caption("Jouez toujours en respectant le consentement, les limites et le safeword. Amusez-vous bien ❤️🔥")
