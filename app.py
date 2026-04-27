@@ -206,11 +206,23 @@ with st.form("custom_form"):
             st.success("Question ajoutée !")
             st.rerun()
 
-# --- RESET (maintenant plus puissant) ---
+# --- RESET (version corrigée et robuste) ---
 with st.expander("⚙️ Paramètres & Reset"):
-    st.warning("⚠️ Cette action va supprimer TOUTES les réponses de Julien et Lydie + les questions personnalisées.")
-    if st.button("🔄 Reboot complet – Tout effacer et recommencer", type="secondary"):
-        if st.checkbox("Je confirme vouloir tout supprimer"):
-            reset_db()
+    st.warning("⚠️ Cette action va supprimer TOUTES les réponses et questions personnalisées.")
+    
+    confirm = st.checkbox("Je confirme que je veux tout supprimer et recommencer à zéro", key="confirm_reset")
+    
+    if st.button("🔄 Reboot complet – Tout effacer", type="secondary", use_container_width=True):
+        if confirm:
+            c.execute("DELETE FROM answers")
+            c.execute("DELETE FROM custom_questions")
+            conn.commit()
+            st.success("✅ Tout a été réinitialisé avec succès !")
+            st.toast("Profil remis à zéro", icon="🔄")
+            # Reset du checkbox
+            st.session_state.confirm_reset = False
+            st.rerun()
+        else:
+            st.error("❌ Tu dois cocher la case de confirmation avant de reset.")
 
 st.caption("Amusez-vous bien ❤️🔥")
