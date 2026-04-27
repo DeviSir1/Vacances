@@ -31,70 +31,55 @@ conn.commit()
 
 # --- 80 QUESTIONS CONCRÈTES ET EXPLICITES ---
 BASE_QUESTIONS = [
-    # SOFT
     {"id": 1, "text": "Longs baisers profonds avec la langue pendant de longues minutes (baisers passionnés et langoureux)", "tag": "sensuel", "level": "Soft"},
     {"id": 2, "text": "Massage lent et sensuel de tout le corps avec de l'huile chaude avant tout rapport", "tag": "sensuel", "level": "Soft"},
-    {"id": 3, "text": "Se caresser mutuellement très longtemps sans pénétration (caresses partout sauf pénétration)", "tag": "sensuel", "level": "Soft"},
-    {"id": 4, "text": "Strip-tease lent et sensuel pour l'autre (se déshabiller lentement en dansant)", "tag": "sensuel", "level": "Soft"},
-    {"id": 5, "text": "Se regarder intensément dans les yeux pendant qu'on se touche ou pendant le sexe", "tag": "sensuel", "level": "Soft"},
-    {"id": 6, "text": "Préliminaires oraux très longs et attentionnés (se lécher et sucer longtemps)", "tag": "oral", "level": "Soft"},
-    {"id": 7, "text": "Cunnilingus lent et créatif (lécher le clitoris et la vulve longuement)", "tag": "oral", "level": "Soft"},
-    {"id": 8, "text": "Fellation lente et profonde avec beaucoup de salive (sucer le pénis lentement et profondément)", "tag": "oral", "level": "Soft"},
-    {"id": 9, "text": "Missionnaire profond avec beaucoup de contact visuel et câlins (position face à face)", "tag": "penetration", "level": "Soft"},
-    {"id": 10, "text": "Sexe en cuillères (spooning) très collé-serré et doux (par derrière en cuillère)", "tag": "penetration", "level": "Soft"},
+    {"id": 3, "text": "Se caresser mutuellement très longtemps sans pénétration", "tag": "sensuel", "level": "Soft"},
+    {"id": 4, "text": "Strip-tease lent et sensuel pour l'autre", "tag": "sensuel", "level": "Soft"},
+    {"id": 5, "text": "Se regarder intensément dans les yeux pendant qu'on se touche", "tag": "sensuel", "level": "Soft"},
+    {"id": 6, "text": "Préliminaires oraux très longs et attentionnés", "tag": "oral", "level": "Soft"},
+    {"id": 7, "text": "Cunnilingus lent et créatif", "tag": "oral", "level": "Soft"},
+    {"id": 8, "text": "Fellation lente et profonde avec beaucoup de salive", "tag": "oral", "level": "Soft"},
+    {"id": 9, "text": "Missionnaire profond avec beaucoup de contact visuel", "tag": "penetration", "level": "Soft"},
+    {"id": 10, "text": "Sexe en cuillères (spooning) très collé-serré", "tag": "penetration", "level": "Soft"},
 
-    # MEDIUM
-    {"id": 11, "text": "Doggy style bien cambré (levrette classique, pénétration par derrière)", "tag": "penetration", "level": "Medium"},
-    {"id": 12, "text": "Cowgirl / Reverse cowgirl en contrôlant le rythme (elle sur lui, face ou dos)", "tag": "penetration", "level": "Medium"},
-    {"id": 13, "text": "Parler salement pendant l'acte (dirty talk : dire des choses crues)", "tag": "parole", "level": "Medium"},
-    {"id": 14, "text": "Se masturber devant l'autre en se regardant dans les yeux", "tag": "voyeur", "level": "Medium"},
-    {"id": 15, "text": "Utiliser un vibromasseur clitoridien pendant la pénétration vaginale", "tag": "jouet", "level": "Medium"},
-    {"id": 16, "text": "Plug anal porté pendant un rapport vaginal (petit jouet dans l'anus pendant le sexe)", "tag": "anal", "level": "Medium"},
-    {"id": 17, "text": "Fessées légères pendant l'acte (claques sur les fesses)", "tag": "bdsm", "level": "Medium"},
-    {"id": 18, "text": "Edging (contrôler l'orgasme en s'arrêtant juste avant pour prolonger le plaisir)", "tag": "hard", "level": "Medium"},
-    {"id": 19, "text": "Sexe debout contre un mur (porté ou appuyé)", "tag": "penetration", "level": "Medium"},
+    {"id": 11, "text": "Doggy style bien cambré", "tag": "penetration", "level": "Medium"},
+    {"id": 12, "text": "Cowgirl / Reverse cowgirl en contrôlant le rythme", "tag": "penetration", "level": "Medium"},
+    {"id": 13, "text": "Parler salement pendant l'acte (dirty talk)", "tag": "parole", "level": "Medium"},
+    {"id": 14, "text": "Se masturber devant l'autre en se regardant", "tag": "voyeur", "level": "Medium"},
+    {"id": 15, "text": "Utiliser un vibromasseur pendant la pénétration", "tag": "jouet", "level": "Medium"},
+    {"id": 16, "text": "Plug anal porté pendant un rapport vaginal", "tag": "anal", "level": "Medium"},
+    {"id": 17, "text": "Fessées légères pendant l'acte", "tag": "bdsm", "level": "Medium"},
+    {"id": 18, "text": "Edging (contrôler l'orgasme longuement)", "tag": "hard", "level": "Medium"},
+    {"id": 19, "text": "Sexe debout contre un mur", "tag": "penetration", "level": "Medium"},
     {"id": 20, "text": "Regarder l'autre se masturber jusqu'à l'orgasme", "tag": "voyeur", "level": "Medium"},
 
-    # HARD
-    {"id": 21, "text": "Levrette forte et profonde (doggy style intense et rapide)", "tag": "penetration", "level": "Hard"},
-    {"id": 22, "text": "Pénétration anale douce et progressive (première fois ou douce sodomie)", "tag": "anal", "level": "Hard"},
-    {"id": 23, "text": "Se faire attacher avec des menottes ou foulards (bondage léger)", "tag": "bdsm", "level": "Hard"},
-    {"id": 24, "text": "Fessées plus marquantes et répétées (spanking fort)", "tag": "bdsm", "level": "Hard"},
-    {"id": 25, "text": "Deepthroat intense (sucer très profondément jusqu'au fond de la gorge)", "tag": "oral", "level": "Hard"},
-    {"id": 26, "text": "Éjaculation faciale ou sur les seins (cumshot sur le visage ou la poitrine)", "tag": "facial", "level": "Hard"},
-    {"id": 27, "text": "Rough sex (sexe violent et bestial de manière consentie : tirer les cheveux, claques, etc.)", "tag": "hard", "level": "Hard"},
-    {"id": 28, "text": "Light choking (main légère sur la gorge pendant le sexe)", "tag": "hard", "level": "Hard"},
-    {"id": 29, "text": "Filmer ou se prendre en photo pendant l'acte (vidéo ou photos érotiques)", "tag": "exhib", "level": "Hard"},
-    {"id": 30, "text": "Wax play (faire couler de la cire chaude de bougie sur la peau)", "tag": "bdsm", "level": "Hard"},
-    {"id": 31, "text": "Pegging (elle porte un strap-on et sodomise lui analement)", "tag": "pegging", "level": "Hard"},
-    {"id": 32, "text": "Rimjob (lécher l'anus de l'autre avec la langue)", "tag": "oral", "level": "Hard"},
-    {"id": 33, "text": "Double pénétration (pénis + jouet en même temps)", "tag": "double", "level": "Hard"},
-    {"id": 34, "text": "Fantasme de plan à trois (MFF ou MMF) – en parler ou simuler", "tag": "trois", "level": "Hard"},
-    {"id": 35, "text": "Breeding fantasy (fantasme de se faire remplir sans protection pour 'faire un bébé')", "tag": "hard", "level": "Hard"},
+    {"id": 21, "text": "Levrette forte et profonde", "tag": "penetration", "level": "Hard"},
+    {"id": 22, "text": "Pénétration anale douce et progressive", "tag": "anal", "level": "Hard"},
+    {"id": 23, "text": "Se faire attacher avec des menottes ou foulards", "tag": "bdsm", "level": "Hard"},
+    {"id": 24, "text": "Fessées plus marquantes", "tag": "bdsm", "level": "Hard"},
+    {"id": 25, "text": "Deepthroat intense", "tag": "oral", "level": "Hard"},
+    {"id": 26, "text": "Éjaculation faciale ou sur les seins", "tag": "facial", "level": "Hard"},
+    {"id": 27, "text": "Rough sex (violent et bestial consentie)", "tag": "hard", "level": "Hard"},
+    {"id": 28, "text": "Light choking (main sur la gorge)", "tag": "hard", "level": "Hard"},
+    {"id": 29, "text": "Filmer pendant l'acte", "tag": "exhib", "level": "Hard"},
+    {"id": 30, "text": "Pegging (elle sodomise lui)", "tag": "pegging", "level": "Hard"},
 
-    # VERY HARD / EXTREME
-    {"id": 36, "text": "Pénétration anale très intense et profonde (sodomie hard)", "tag": "anal", "level": "Very Hard"},
-    {"id": 37, "text": "Fisting vaginal ou anal (introduire toute la main dans le vagin ou l'anus)", "tag": "extreme", "level": "Very Hard"},
-    {"id": 38, "text": "Golden shower (uriner sur l'autre ou se faire uriner dessus pendant le jeu sexuel)", "tag": "extreme", "level": "Very Hard"},
-    {"id": 39, "text": "Candaulisme (regarder son partenaire avoir un rapport sexuel avec quelqu'un d'autre)", "tag": "voyeur", "level": "Very Hard"},
-    {"id": 40, "text": "Humiliation légère (insultes sexuelles consenties, se faire traiter de salope, etc.)", "tag": "bdsm", "level": "Very Hard"},
-    {"id": 41, "text": "Consensual Non-Consent (CNC) – simuler un viol fantasy avec safeword", "tag": "extreme", "level": "Very Hard"},
-    {"id": 42, "text": "Jeux de douleur plus forte (pinces à seins, morsures fortes, etc.)", "tag": "extreme", "level": "Very Hard"},
-    {"id": 43, "text": "Sexe pendant les règles avec creampie (éjaculation intérieure pendant les règles)", "tag": "tabou", "level": "Very Hard"},
-    {"id": 44, "text": "Utiliser des poppers pendant l'acte pour intensifier les sensations", "tag": "extreme", "level": "Very Hard"},
-    {"id": 45, "text": "Double pénétration anale + vaginale (deux pénétrations en même temps)", "tag": "extreme", "level": "Very Hard"},
-    {"id": 46, "text": "Gangbang fantasy (se faire prendre par plusieurs personnes – en parler ou simuler)", "tag": "extreme", "level": "Extreme"},
-    {"id": 47, "text": "Humiliation forte et jeux de dégradation (se faire traiter comme un objet sexuel)", "tag": "extreme", "level": "Extreme"},
-    {"id": 48, "text": "Jeu de chasteté (mettre une cage à pénis et contrôler les orgasmes)", "tag": "bdsm", "level": "Extreme"},
-    {"id": 49, "text": "Public play avec vibro télécommandé en public", "tag": "exhib", "level": "Extreme"},
-    {"id": 50, "text": "Face sitting (s'asseoir sur le visage de l'autre pour se faire lécher)", "tag": "oral", "level": "Hard"},
+    {"id": 31, "text": "Pénétration anale très intense", "tag": "anal", "level": "Very Hard"},
+    {"id": 32, "text": "Fisting vaginal ou anal", "tag": "extreme", "level": "Very Hard"},
+    {"id": 33, "text": "Golden shower (uriner sur l'autre)", "tag": "extreme", "level": "Very Hard"},
+    {"id": 34, "text": "Candaulisme (regarder l'autre avec quelqu'un)", "tag": "voyeur", "level": "Very Hard"},
+    {"id": 35, "text": "Humiliation légère consentie", "tag": "bdsm", "level": "Very Hard"},
+    {"id": 36, "text": "Consensual Non-Consent (CNC - viol fantasy)", "tag": "extreme", "level": "Very Hard"},
+    {"id": 37, "text": "Gangbang fantasy", "tag": "extreme", "level": "Extreme"},
+    {"id": 38, "text": "Humiliation forte", "tag": "extreme", "level": "Extreme"},
+    {"id": 39, "text": "Jeu de chasteté (cage à pénis)", "tag": "bdsm", "level": "Extreme"},
+    {"id": 40, "text": "Public play avec vibro télécommandé", "tag": "exhib", "level": "Extreme"},
 ]
 
-# Compléter jusqu'à 80
-for i in range(51, 81):
+for i in range(41, 81):
     BASE_QUESTIONS.append({
         "id": i,
-        "text": f"Autre fantasme coquin à définir ensemble (question {i})",
+        "text": f"Fantasme coquin à définir ensemble (question {i})",
         "tag": "love",
         "level": "Variable"
     })
@@ -137,7 +122,7 @@ def reset_db():
     c.execute("DELETE FROM answers")
     c.execute("DELETE FROM custom_questions")
     conn.commit()
-    st.success("✅ Tout a été réinitialisé. Rafraîchis la page.")
+    st.toast("✅ Tout a été réinitialisé !", icon="🔄")
     st.rerun()
 
 # --- INTERFACE ---
@@ -167,20 +152,19 @@ if next_q:
     </div>
     """, unsafe_allow_html=True)
 
-    col_btn1, col_btn2 = st.columns(2)
-    with col_btn1:
+    col1, col2 = st.columns(2)
+    with col1:
         if st.button("❌ PASS", use_container_width=True):
             save_answer(user, next_q["id"], "pass")
             st.rerun()
-    with col_btn2:
+    with col2:
         if st.button("❤️ SMASH", type="primary", use_container_width=True):
-            comfort = st.slider("Niveau de confort avec ce fantasme (1 = pas à l'aise → 5 = très excité)", 1, 5, 4, key=f"comfort_{next_q['id']}")
+            comfort = st.slider("Niveau de confort (1→5)", 1, 5, 4, key=f"comf_{next_q['id']}")
             save_answer(user, next_q["id"], "smash", comfort)
             st.success("Smash enregistré !")
             st.rerun()
-
 else:
-    st.success(f"🎉 Bravo {user} ! Tu as terminé toutes les questions.")
+    st.success(f"🎉 Bravo {user} ! Tu as terminé les 80 questions.")
 
 # --- RÉSULTATS ---
 st.write("---")
@@ -189,59 +173,44 @@ st.subheader("🔥 Nos Matchs Coquins")
 matches = get_matches()
 
 if not matches:
-    st.info("Pas encore de smash commun. Continuez à swiper tous les deux !")
+    st.info("Pas encore de smash commun. Continuez à swiper !")
 else:
     st.success(f"**{len(matches)} fantasmes validés à deux !**")
-
+    
     tag_count = defaultdict(int)
-    level_count = defaultdict(int)
     for m in matches:
         tag_count[m["tag"]] += 1
-        level_count[m["level"]] += 1
 
-    st.write("**Répartition des smash communs :**")
+    st.write("**Répartition :**")
     for tag, count in sorted(tag_count.items(), key=lambda x: x[1], reverse=True):
         st.progress(count / max(len(matches), 1))
-        st.caption(f"**{tag.capitalize()}** : {count} smash")
+        st.caption(f"**{tag.capitalize()}** : {count}")
 
-    extreme_score = level_count.get("Extreme", 0) + level_count.get("Very Hard", 0)
-    if extreme_score >= 8:
-        style = "🚨 **Style Extrême / Hardcore Kink**"
-    elif extreme_score >= 4:
-        style = "🔥 **Style Hard & Kinky**"
-    elif level_count.get("Medium", 0) >= 10:
-        style = "🌶️ **Style Sensuel & Joueur**"
-    else:
-        style = "❤️ **Style Romantique & Intime**"
-    st.info(style)
-
-    with st.expander("Voir le détail des matchs communs"):
+    with st.expander("Détail des matchs"):
         for m in matches:
-            st.markdown(f"• **{m.get('level', '')}** — {m['text']}")
+            st.write(f"• {m['text']}")
 
-# --- AJOUT QUESTION PERSONNALISÉE ---
+# --- QUESTION PERSONNALISÉE ---
 st.write("---")
 st.subheader("➕ Ajouter une question personnalisée")
 with st.form("custom_form"):
-    custom_text = st.text_area("Décris ton fantasme ou pratique précise :", 
-                               placeholder="Ex : Se faire attacher les mains dans le dos et se faire utiliser pendant 20 minutes...")
-    col_t1, col_t2 = st.columns(2)
-    with col_t1:
-        custom_tag = st.selectbox("Catégorie", ["sensuel", "oral", "penetration", "anal", "bdsm", "hard", "extreme", "trois", "love", "jouet", "voyeur", "exhib", "facial", "tabou", "pegging", "roleplay"])
-    with col_t2:
-        custom_level = st.selectbox("Niveau", ["Soft", "Medium", "Hard", "Very Hard", "Extreme", "Variable"])
-    
-    if st.form_submit_button("Ajouter cette question"):
-        if custom_text.strip():
-            add_custom_question(user, custom_text.strip(), custom_tag, custom_level)
-            st.success("✅ Question personnalisée ajoutée pour vous deux !")
+    txt = st.text_area("Ton fantasme précis :", placeholder="Ex: Se faire attacher et utiliser comme objet sexuel...")
+    c1, c2 = st.columns(2)
+    with c1:
+        tag = st.selectbox("Catégorie", ["sensuel", "oral", "penetration", "anal", "bdsm", "hard", "extreme", "trois", "love"])
+    with c2:
+        lvl = st.selectbox("Niveau", ["Soft", "Medium", "Hard", "Very Hard", "Extreme"])
+    if st.form_submit_button("Ajouter"):
+        if txt.strip():
+            add_custom_question(user, txt.strip(), tag, lvl)
+            st.success("Question ajoutée !")
             st.rerun()
 
-# --- RESET ---
+# --- RESET (maintenant plus puissant) ---
 with st.expander("⚙️ Paramètres & Reset"):
-    st.warning("Cette action effacera toutes les réponses et questions personnalisées.")
-    if st.button("🔄 Reboot complet (effacer tout et recommencer)", type="secondary"):
-        if st.checkbox("Je confirme que je veux tout supprimer"):
+    st.warning("⚠️ Cette action va supprimer TOUTES les réponses de Julien et Lydie + les questions personnalisées.")
+    if st.button("🔄 Reboot complet – Tout effacer et recommencer", type="secondary"):
+        if st.checkbox("Je confirme vouloir tout supprimer"):
             reset_db()
 
-st.caption("Amusez-vous bien ❤️🔥 – Jouez toujours avec consentement mutuel.")
+st.caption("Amusez-vous bien ❤️🔥")
