@@ -206,23 +206,31 @@ with st.form("custom_form"):
             st.success("Question ajoutée !")
             st.rerun()
 
-# --- RESET (version corrigée et robuste) ---
+# --- RESET (version finale stable) ---
 with st.expander("⚙️ Paramètres & Reset"):
     st.warning("⚠️ Cette action va supprimer TOUTES les réponses et questions personnalisées.")
     
-    confirm = st.checkbox("Je confirme que je veux tout supprimer et recommencer à zéro", key="confirm_reset")
+    confirm_reset = st.checkbox(
+        "Je confirme que je veux tout supprimer et recommencer à zéro", 
+        key="confirm_reset_key"
+    )
     
     if st.button("🔄 Reboot complet – Tout effacer", type="secondary", use_container_width=True):
-        if confirm:
+        if confirm_reset:
+            # Suppression des données
             c.execute("DELETE FROM answers")
             c.execute("DELETE FROM custom_questions")
             conn.commit()
+            
             st.success("✅ Tout a été réinitialisé avec succès !")
             st.toast("Profil remis à zéro", icon="🔄")
-            # Reset du checkbox
-            st.session_state.confirm_reset = False
+            
+            # Nettoyage propre du session state
+            if "confirm_reset_key" in st.session_state:
+                del st.session_state.confirm_reset_key
+            
             st.rerun()
         else:
-            st.error("❌ Tu dois cocher la case de confirmation avant de reset.")
+            st.error("❌ Tu dois cocher la case de confirmation.")
 
 st.caption("Amusez-vous bien ❤️🔥")
