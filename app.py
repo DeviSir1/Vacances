@@ -276,26 +276,48 @@ else:
         st.progress(count / len(matches))
         st.caption(f"**{tag.capitalize()}** : {count} smash")
 
-    # === DÉTAIL CLAIR DES MATCHS ===
-    st.markdown("### 📋 Liste détaillée des fantasmes validés à deux")
-    with st.expander("👀 Voir les 35 questions en commun (clique pour ouvrir)", expanded=True):
+    # === ANALYSE VERT / ORANGE / ROUGE ===
+    st.markdown("### 📊 Analyse de votre compatibilité")
+
+    col1, col2, col3 = st.columns(3)
+
+    with col1:
+        st.success("**VERT** - Très bien alignés")
+        vert_list = [m for m in matches if m["tag"] in ["sensuel", "oral", "love", "consentement"]]
+        for m in vert_list[:8]:   # limite pour ne pas surcharger
+            st.write(f"• {m['text']}")
+
+    with col2:
+        st.warning("**ORANGE** - À discuter")
+        orange_tags = ["penetration", "anal", "bdsm", "hard", "jouet", "voyeur", "exhib"]
+        orange_list = [m for m in matches if m["tag"] in orange_tags]
+        for m in orange_list[:6]:
+            st.write(f"• {m['text']}")
+
+    with col3:
+        st.error("**ROUGE** - Gros écart ou non validé")
+        st.write("Pratiques peu ou pas présentes :")
+        st.caption("- Golden shower\n- Fisting\n- Humiliation forte\n- CNC extrême\n- Scat\n- Choking marqué")
+
+    # Style global
+    extreme_score = tag_count.get("extreme", 0) + tag_count.get("hard", 0) + tag_count.get("bdsm", 0)
+    if extreme_score >= 12:
+        style = "🚨 Style Extrême / Hardcore"
+    elif extreme_score >= 6:
+        style = "🔥 Style Hard & Kinky"
+    elif tag_count.get("sensuel", 0) + tag_count.get("love", 0) >= 10:
+        style = "❤️ Style Sensuel & Romantique"
+    else:
+        style = "🌶️ Style Joueur et Équilibré"
+    
+    st.info(f"**Style global du couple :** {style}")
+
+    # Liste complète des matchs
+    with st.expander("Voir la liste complète des 35 matchs communs", expanded=False):
         for i, m in enumerate(sorted(matches, key=lambda x: x["id"]), 1):
             st.markdown(f"**{i}.** {m['text']}")
-            st.caption(f"Niveau : **{m.get('level', '—')}** | Catégorie : **{m.get('tag', '—').capitalize()}**")
+            st.caption(f"Niveau : **{m.get('level', '—')}** | Catégorie : {m.get('tag', '—').capitalize()}")
             st.divider()
-
-    # Analyse du style du couple
-    extreme = tag_count.get("extreme", 0) + tag_count.get("hard", 0)
-    if extreme >= 12:
-        style = "🚨 **Style Extrême / Trash**"
-    elif extreme >= 7:
-        style = "🔥 **Style Hard & Kinky**"
-    elif tag_count.get("sensuel", 0) >= 6:
-        style = "❤️ **Style Sensuel & Romantique**"
-    else:
-        style = "🌶️ **Style Joueur et Équilibré**"
-    
-    st.info(style)
 
 # --- RESET ---
 with st.expander("⚙️ Paramètres & Reset"):
