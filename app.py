@@ -256,7 +256,7 @@ if next_q:
 else:
     st.success(f"🎉 Bravo {user} ! Tu as terminé les 100 questions.")
 
-# --- RÉSULTATS ---
+# --- RÉSULTATS AMÉLIORÉS ---
 st.write("---")
 st.subheader("🔥 Nos Matchs Coquins")
 
@@ -266,12 +266,36 @@ if not matches:
     st.info("Pas encore de smash commun.")
 else:
     st.success(f"**{len(matches)} fantasmes validés à deux !**")
+    
+    # Statistiques
     tag_count = defaultdict(int)
     for m in matches:
         tag_count[m["tag"]] += 1
+    
     for tag, count in sorted(tag_count.items(), key=lambda x: x[1], reverse=True):
-        st.progress(count / max(len(matches), 1))
+        st.progress(count / len(matches))
         st.caption(f"**{tag.capitalize()}** : {count} smash")
+
+    # === DÉTAIL CLAIR DES MATCHS ===
+    st.markdown("### 📋 Liste détaillée des fantasmes validés à deux")
+    with st.expander("👀 Voir les 35 questions en commun (clique pour ouvrir)", expanded=True):
+        for i, m in enumerate(sorted(matches, key=lambda x: x["id"]), 1):
+            st.markdown(f"**{i}.** {m['text']}")
+            st.caption(f"Niveau : **{m.get('level', '—')}** | Catégorie : **{m.get('tag', '—').capitalize()}**")
+            st.divider()
+
+    # Analyse du style du couple
+    extreme = tag_count.get("extreme", 0) + tag_count.get("hard", 0)
+    if extreme >= 12:
+        style = "🚨 **Style Extrême / Trash**"
+    elif extreme >= 7:
+        style = "🔥 **Style Hard & Kinky**"
+    elif tag_count.get("sensuel", 0) >= 6:
+        style = "❤️ **Style Sensuel & Romantique**"
+    else:
+        style = "🌶️ **Style Joueur et Équilibré**"
+    
+    st.info(style)
 
 # --- RESET ---
 with st.expander("⚙️ Paramètres & Reset"):
