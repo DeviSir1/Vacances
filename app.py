@@ -281,7 +281,7 @@ else:
             st.caption(f"Niveau : **{m.get('level', '—')}** | Catégorie : {m.get('tag', '—').capitalize()}")
             st.divider()
 
-# === NOUVELLE SECTION : VOIR LES RÉPONSES INDIVIDUELLES ===
+# === NOUVELLE SECTION : VOIR LES RÉPONSES INDIVIDUELLES (corrigée) ===
 st.write("---")
 st.subheader("👤 Voir les réponses de chacun")
 
@@ -299,27 +299,31 @@ if "show_user" in st.session_state:
     user_to_show = st.session_state.show_user
     answers = get_user_answers(user_to_show)
     
-    st.markdown(f"### Réponses de **{user_to_show}** ({len(answers)} questions répondues)")
+    st.markdown(f"### Réponses de **{user_to_show}**")
 
+    all_q = load_all_questions()
     smash_list = []
     pass_list = []
     
-    all_q = load_all_questions()
     for q in all_q:
         if q["id"] in answers:
             ans = answers[q["id"]]
-            if ans["answer"] == "smash":
-                smash_list.append(q)
+            if ans["answer"] == "smash" or ans["answer"] not in ["pass", "Pass"]:
+                # Pour les QCM, on considère que choisir une option = Smash
+                smash_list.append((q, ans["answer"]))
             else:
                 pass_list.append(q)
 
-    with st.expander(f"✅ Smash de {user_to_show} ({len(smash_list)})", expanded=False):
-        for q in smash_list:
-            st.write(f"- {q['text']}")
+    with st.expander(f"✅ Smash de {user_to_show} ({len(smash_list)})", expanded=True):
+        for q, response in smash_list:
+            if q.get("type") == "choice":
+                st.write(f"• **{q['text']}** → **{response}**")
+            else:
+                st.write(f"• {q['text']}")
 
-    with st.expander(f"❌ Pass de {user_to_show} ({len(pass_list)})", expanded=False):
+    with st.expander(f"❌ Pass de {user_to_show} ({len(pass_list)})", expanded=True):
         for q in pass_list:
-            st.write(f"- {q['text']}")
+            st.write(f"• {q['text']}")
 
 # --- RESET ---
 with st.expander("⚙️ Paramètres & Reset"):
