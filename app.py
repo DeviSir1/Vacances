@@ -256,7 +256,7 @@ if next_q:
 else:
     st.success(f"🎉 Bravo {user} ! Tu as terminé les 100 questions.")
 
-# --- RÉSULTATS AMÉLIORÉS ---
+# --- RÉSULTATS + NOUVELLE FONCTIONNALITÉ ---
 st.write("---")
 st.subheader("🔥 Nos Matchs Coquins")
 
@@ -266,58 +266,60 @@ if not matches:
     st.info("Pas encore de smash commun.")
 else:
     st.success(f"**{len(matches)} fantasmes validés à deux !**")
-    
-    # Statistiques
+
     tag_count = defaultdict(int)
     for m in matches:
         tag_count[m["tag"]] += 1
-    
+
     for tag, count in sorted(tag_count.items(), key=lambda x: x[1], reverse=True):
         st.progress(count / len(matches))
         st.caption(f"**{tag.capitalize()}** : {count} smash")
 
-    # === ANALYSE VERT / ORANGE / ROUGE ===
-    st.markdown("### 📊 Analyse de votre compatibilité")
-
-    col1, col2, col3 = st.columns(3)
-
-    with col1:
-        st.success("**VERT** - Très bien alignés")
-        vert_list = [m for m in matches if m["tag"] in ["sensuel", "oral", "love", "consentement"]]
-        for m in vert_list[:8]:   # limite pour ne pas surcharger
-            st.write(f"• {m['text']}")
-
-    with col2:
-        st.warning("**ORANGE** - À discuter")
-        orange_tags = ["penetration", "anal", "bdsm", "hard", "jouet", "voyeur", "exhib"]
-        orange_list = [m for m in matches if m["tag"] in orange_tags]
-        for m in orange_list[:6]:
-            st.write(f"• {m['text']}")
-
-    with col3:
-        st.error("**ROUGE** - Gros écart ou non validé")
-        st.write("Pratiques peu ou pas présentes :")
-        st.caption("- Golden shower\n- Fisting\n- Humiliation forte\n- CNC extrême\n- Scat\n- Choking marqué")
-
-    # Style global
-    extreme_score = tag_count.get("extreme", 0) + tag_count.get("hard", 0) + tag_count.get("bdsm", 0)
-    if extreme_score >= 12:
-        style = "🚨 Style Extrême / Hardcore"
-    elif extreme_score >= 6:
-        style = "🔥 Style Hard & Kinky"
-    elif tag_count.get("sensuel", 0) + tag_count.get("love", 0) >= 10:
-        style = "❤️ Style Sensuel & Romantique"
-    else:
-        style = "🌶️ Style Joueur et Équilibré"
-    
-    st.info(f"**Style global du couple :** {style}")
-
-    # Liste complète des matchs
-    with st.expander("Voir la liste complète des 35 matchs communs", expanded=False):
+    with st.expander("📋 Voir la liste complète des 35 matchs communs", expanded=True):
         for i, m in enumerate(sorted(matches, key=lambda x: x["id"]), 1):
             st.markdown(f"**{i}.** {m['text']}")
             st.caption(f"Niveau : **{m.get('level', '—')}** | Catégorie : {m.get('tag', '—').capitalize()}")
             st.divider()
+
+# === NOUVELLE SECTION : VOIR LES RÉPONSES INDIVIDUELLES ===
+st.write("---")
+st.subheader("👤 Voir les réponses de chacun")
+
+colj, coll = st.columns(2)
+
+with colj:
+    if st.button("Voir les réponses de **Julien**", use_container_width=True):
+        st.session_state.show_user = "Julien"
+
+with coll:
+    if st.button("Voir les réponses de **Lydie**", use_container_width=True):
+        st.session_state.show_user = "Lydie"
+
+if "show_user" in st.session_state:
+    user_to_show = st.session_state.show_user
+    answers = get_user_answers(user_to_show)
+    
+    st.markdown(f"### Réponses de **{user_to_show}** ({len(answers)} questions répondues)")
+
+    smash_list = []
+    pass_list = []
+    
+    all_q = load_all_questions()
+    for q in all_q:
+        if q["id"] in answers:
+            ans = answers[q["id"]]
+            if ans["answer"] == "smash":
+                smash_list.append(q)
+            else:
+                pass_list.append(q)
+
+    with st.expander(f"✅ Smash de {user_to_show} ({len(smash_list)})", expanded=False):
+        for q in smash_list:
+            st.write(f"- {q['text']}")
+
+    with st.expander(f"❌ Pass de {user_to_show} ({len(pass_list)})", expanded=False):
+        for q in pass_list:
+            st.write(f"- {q['text']}")
 
 # --- RESET ---
 with st.expander("⚙️ Paramètres & Reset"):
